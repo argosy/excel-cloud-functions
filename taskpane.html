@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Cloud Functions Task Pane</title>
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+</head>
+<body>
+    <div id="content">
+        <h2>🚀 Cloud Functions</h2>
+        <p>Select a range and click the button to add 1 to each number using Google Cloud Run.</p>
+        
+        <div class="input-section">
+            <h3>Instructions:</h3>
+            <ol>
+                <li>Select a range of cells with numbers</li>
+                <li>Click "Add One to Selection"</li>
+                <li>Results will appear to the right of your selection</li>
+            </ol>
+        </div>
+        
+        <div class="controls">
+            <button id="add-one-btn" class="primary-btn">Add One to Selection</button>
+            <button id="test-btn" class="secondary-btn">Test Cloud Service</button>
+        </div>
+        
+        <div id="status" class="status-area">Ready to process your data!</div>
+        <div id="result" class="result-area"></div>
+    </div>
+
+    <script>
+        Office.onReady((info) => {
+            if (info.host === Office.HostType.Excel) {
+                document.getElementById("add-one-btn").onclick = addOneToSelection;
+                document.getElementById("test-btn").onclick = testCloudService;
+                updateStatus("✅ Ready! Select a range and click 'Add One to Selection'");
+            }
+        });
+
+        async function addOneToSelection() {
+            try {
+                updateStatus("🔄 Processing your selection...");
+                
+                await Excel.run(async (context) => {
+                    // Get selected range
+                    const range = context.workbook.getSelectedRange();
+                    range.load(["values", "address", "rowCount", "columnCount"]);
+                    await context.sync();
+
+                    if (range.rowCount === 0 || range.columnCount === 0) {
+                        throw new Error("Please select a range with data");
+                    }
+
+                    updateStatus(`📊 Processing ${range.rowCount}x${range.columnCount} range...`);
+
+                    // Get the data
+                    const inputData = range.values;
+                    console.log("Input data:", inputData);
+                    
+                    // Call Cloud Run service
+                    const response = await fetch('https://excel-add-one-function-449328337363.us-central1.run.app/add-one', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            data: inputData
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    console.log("Cloud Run result:", result);
+                    
+                    if (result.status !== 'success') {
+                        throw new Error(result.error || 'Unknown error from service');
+                    }
+
+                    // Place results to the right of selection
+                    const outputRange = range.getOffsetRange(0, range.columnCount);
+                    outputRange.values = result.result;
+                    
+                    // Format the output
+                    outputRange.format.fill.color = "#E7F3FF";
+                    outputRange.format.borders.getItem("EdgeBottom").style = "Continuous";
+                    outputRange.format.borders.getItem("EdgeTop").style = "Continuous";
+                    outputRange.format.borders.getItem("EdgeLeft").style = "Continuous";
+                    outputRange.format.borders.getItem("EdgeRight").style = "Continuous";
+                    
+                    await context.sync();
+
+                    updateStatus(`✅ Success! Added 1 to ${result.total_elements} numbers`);
+                    
+                    document.getElementById("result").innerHTML = `
+                        <h4>📊 Results:</h4>
+                        <p><strong>Rows processed:</strong> ${result.rows_processed}</p>
+                        <p><strong>Numbers updated:</strong> ${result.total_elements}</p>
+                        <p><strong>Output location:</strong> ${outputRange.address}</p>
+                        <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+                    `;
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+                updateStatus(`❌ Error: ${error.message}`);
+                document.getElementById("result").innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+
+        async function testCloudService() {
+            try {
+                updateStatus("🔄 Testing cloud service...");
+                
+                const response = await fetch('https://excel-add-one-function-449328337363.us-central1.run.app/', {
+                    method: 'GET'
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    updateStatus("✅ Cloud service is working!");
+                    document.getElementById("result").innerHTML = `
+                        <h4>☁️ Service Status:</h4>
+                        <p><strong>Status:</strong> ${result.status}</p>
+                        <p><strong>Service:</strong> ${result.service}</p>
+                        <p><strong>Message:</strong> ${result.message}</p>
+                    `;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                updateStatus("❌ Cloud service test failed");
+                document.getElementById("result").innerHTML = `<p style="color: red;">Service test failed: ${error.message}</p>`;
+            }
+        }
+
+        function updateStatus(message) {
+            const statusElement = document.getElementById("status");
+            statusElement.innerHTML = message;
+            statusElement.className = message.includes('❌') ? 'status-area error' : 
+                                     message.includes('✅') ? 'status-area success' : 
+                                     'status-area';
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+        
+        #content {
+            max-width: 400px;
+        }
+        
+        h2 {
+            color: #0078d4;
+            margin-bottom: 10px;
+        }
+        
+        h3 {
+            color: #323130;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .input-section {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .input-section ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+        }
+        
+        .primary-btn {
+            background: linear-gradient(135deg, #0078d4, #106ebe);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .primary-btn:hover {
+            background: linear-gradient(135deg, #106ebe, #005a9e);
+            transform: translateY(-1px);
+        }
+        
+        .secondary-btn {
+            background: #f3f2f1;
+            color: #323130;
+            border: 1px solid #d1d1d1;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .secondary-btn:hover {
+            background: #e1dfdd;
+        }
+        
+        .status-area {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #0078d4;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .status-area.success {
+            border-left-color: #107c10;
+            background: #f3fff2;
+            color: #107c10;
+        }
+        
+        .status-area.error {
+            border-left-color: #d13438;
+            background: #fef7f7;
+            color: #d13438;
+        }
+        
+        .result-area {
+            background: white;
+            border-radius: 6px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 14px;
+        }
+        
+        .result-area h4 {
+            margin: 0 0 10px 0;
+            color: #0078d4;
+        }
+        
+        .result-area p {
+            margin: 5px 0;
+            color: #323130;
+        }
+    </style>
+</body>
+</html>
