@@ -3,92 +3,19 @@
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <title>Excel Cloud Functions Runtime</title>
-    <!-- Office.js must be loaded first -->
+    <title>Custom Functions Runtime</title>
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
 </head>
 <body>
-    <div id="content">
-        <h1>🚀 Excel Cloud Functions</h1>
-        <p>Custom functions runtime is loading...</p>
-        
-        <div id="status" class="status-box">
-            🔄 Initializing custom functions runtime...
-        </div>
+    <div>
+        <h2>Custom Functions Runtime</h2>
+        <p>This page supports custom functions.</p>
     </div>
 
     <script>
-        Office.onReady((info) => {
-            console.log('Office.js initialized', info);
-            
-            if (info.host === Office.HostType.Excel) {
-                console.log('Excel host detected');
-                
-                // Update status
-                const statusDiv = document.getElementById('status');
-                if (statusDiv) {
-                    statusDiv.innerHTML = '✅ Custom functions runtime ready for Excel!';
-                    statusDiv.className = 'status-box success';
-                }
-            } else {
-                console.log('Non-Excel host or standalone browser');
-                
-                const statusDiv = document.getElementById('status');
-                if (statusDiv) {
-                    statusDiv.innerHTML = '⚠️ Not running in Excel - functions may not be available';
-                    statusDiv.className = 'status-box warning';
-                }
-            }
-            
-            // The actual functions are loaded from functions.js by Excel's runtime
-            console.log('Functions page v3 initialized successfully');
+        Office.onReady(() => {
+            console.log('Office.js ready for custom functions');
         });
     </script>
-
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-        
-        #content {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            padding: 30px;
-            text-align: center;
-        }
-        
-        h1 {
-            color: #0078d4;
-            margin-bottom: 20px;
-        }
-        
-        .status-box {
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            font-weight: 600;
-            background: #fff4ce;
-            color: #323130;
-            border: 2px solid #ffb900;
-        }
-        
-        .status-box.success {
-            background: #dff6dd;
-            color: #107c10;
-            border-color: #107c10;
-        }
-        
-        .status-box.warning {
-            background: #fff4ce;
-            color: #8a6914;
-            border-color: #ffb900;
-        }
-    </style>
 </body>
 </html>
