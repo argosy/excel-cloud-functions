@@ -1,73 +1,55 @@
 {
   "functions": [
     {
-      "description": "Adds 1 to each element in a 2D range using Google Cloud Run",
+      "description": "Adds 1 to each element using Google Cloud Run",
       "id": "ADDONE",
       "name": "ADDONE",
       "parameters": [
         {
-          "description": "The 2D range of numbers to process",
+          "description": "The range to process",
           "name": "range",
           "type": "any[][]"
         }
       ],
       "result": {
-        "type": "any[][]",
-        "description": "2D array with 1 added to each numeric element"
-      },
-      "options": {
-        "requiresAddress": false,
-        "volatile": false,
-        "cancelable": true
+        "type": "any[][]"
       }
     },
     {
-      "description": "Adds a custom value to each element in a 2D range (processed locally)",
-      "id": "ADDVALUE",
-      "name": "ADDVALUE", 
-      "parameters": [
-        {
-          "description": "The 2D range of numbers to process",
-          "name": "range",
-          "type": "any[][]"
-        },
-        {
-          "description": "The value to add to each element (default: 1)",
-          "name": "value",
-          "type": "number",
-          "optional": true
-        }
-      ],
-      "result": {
-        "type": "any[][]",
-        "description": "2D array with the value added to each numeric element"
-      },
-      "options": {
-        "requiresAddress": false,
-        "volatile": false,
-        "cancelable": true
-      }
-    },
-    {
-      "description": "Test function to verify the add-in is working properly",
-      "id": "TEST",
+      "description": "Simple test function",
+      "id": "TEST", 
       "name": "TEST",
       "parameters": [
         {
-          "description": "A test message (default: 'Hello')",
+          "description": "Test message",
           "name": "message",
           "type": "string",
           "optional": true
         }
       ],
       "result": {
-        "type": "string",
-        "description": "Confirmation message with timestamp"
-      },
-      "options": {
-        "requiresAddress": false,
-        "volatile": true,
-        "cancelable": false
+        "type": "string"
+      }
+    },
+    {
+      "description": "Add custom value to each element",
+      "id": "ADDVALUE",
+      "name": "ADDVALUE",
+      "parameters": [
+        {
+          "description": "The range to process", 
+          "name": "range",
+          "type": "any[][]"
+        },
+        {
+          "description": "Value to add",
+          "name": "value", 
+          "type": "number",
+          "optional": true
+        }
+      ],
+      "result": {
+        "type": "any[][]"
       }
     }
   ]
