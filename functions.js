@@ -3,6 +3,17 @@
 // IMPORTANT: Your actual Cloud Run service URL
 const CLOUD_RUN_URL = 'https://excel-add-one-function-449328337363.us-central1.run.app/add-one';
 
+// Wait for CustomFunctions to be available
+function waitForCustomFunctions() {
+  if (typeof CustomFunctions !== 'undefined') {
+    console.log('CustomFunctions is available, registering functions...');
+    registerFunctions();
+  } else {
+    console.log('CustomFunctions not yet available, waiting...');
+    setTimeout(waitForCustomFunctions, 100);
+  }
+}
+
 /**
  * Adds 1 to each element in a 2D range using Google Cloud Run
  * @customfunction ADDONE
@@ -115,7 +126,22 @@ function test(message = "Hello") {
   return \`${message} from Cloud Functions at ${timestamp}\`;
 }
 
-// Register all custom functions with Excel
-CustomFunctions.associate("ADDONE", addOne);
-CustomFunctions.associate("ADDVALUE", addValue);
-CustomFunctions.associate("TEST", test);
+// Register functions with better error handling
+function registerFunctions() {
+  try {
+    if (typeof CustomFunctions !== 'undefined' && CustomFunctions.associate) {
+      CustomFunctions.associate("ADDONE", addOne);
+      CustomFunctions.associate("ADDVALUE", addValue);
+      CustomFunctions.associate("TEST", test);
+      console.log('✅ All custom functions registered successfully');
+    } else {
+      console.error('❌ CustomFunctions.associate is not available');
+    }
+  } catch (error) {
+    console.error('❌ Error registering custom functions:', error);
+  }
+}
+
+// Start the registration process when the script loads
+console.log('Functions.js loaded, waiting for CustomFunctions...');
+waitForCustomFunctions();

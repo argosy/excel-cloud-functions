@@ -4,155 +4,74 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <title>Excel Cloud Functions Runtime</title>
+    <!-- Office.js must be loaded first -->
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
 </head>
 <body>
     <div id="content">
         <h1>🚀 Excel Cloud Functions</h1>
-        <p>This page supports the custom functions runtime powered by Google Cloud Run.</p>
-        
-        <div class="functions-list">
-            <h2>📋 Available Functions:</h2>
-            
-            <div class="function-item">
-                <h3>=CLOUDRUN.ADDONE(A1:C5)</h3>
-                <p>Adds 1 to each element in the range using Google Cloud Run processing</p>
-                <div class="example">
-                    <strong>Example:</strong><br>
-                    Input: [[1,2,3], [4,5,6]] → Output: [[2,3,4], [5,6,7]]
-                </div>
-            </div>
-            
-            <div class="function-item">
-                <h3>=CLOUDRUN.ADDVALUE(A1:C5, 10)</h3>
-                <p>Adds a custom value (10 in this example) to each element, processed locally for speed</p>
-                <div class="example">
-                    <strong>Example:</strong><br>
-                    =CLOUDRUN.ADDVALUE(A1:B2, 5) adds 5 to each number
-                </div>
-            </div>
-            
-            <div class="function-item">
-                <h3>=CLOUDRUN.TEST("Hello World")</h3>
-                <p>Test function to verify the add-in is working properly</p>
-                <div class="example">
-                    <strong>Example:</strong><br>
-                    =CLOUDRUN.TEST() returns "Hello from Cloud Functions at [time]"
-                </div>
-            </div>
-        </div>
+        <p>Custom functions runtime is loading...</p>
         
         <div id="status" class="status-box">
-            🔄 Initializing custom functions...
-        </div>
-        
-        <div class="troubleshooting">
-            <h2>🔧 Troubleshooting:</h2>
-            <ul>
-                <li>If functions show #NAME? error, wait a few seconds and try again</li>
-                <li>For "Error: [message]" results, check the browser console for details</li>
-                <li>Make sure you're connected to the internet</li>
-                <li>Try the TEST function first to verify the add-in is loaded</li>
-            </ul>
+            🔄 Initializing custom functions runtime...
         </div>
     </div>
 
     <script>
-        Office.onReady(() => {
-            console.log('Custom functions runtime initialized');
+        Office.onReady((info) => {
+            console.log('Office.js initialized', info);
             
-            // Update status
-            const statusDiv = document.getElementById('status');
-            if (statusDiv) {
-                statusDiv.innerHTML = '✅ Custom functions loaded and ready to use!';
-                statusDiv.className = 'status-box success';
+            if (info.host === Office.HostType.Excel) {
+                console.log('Excel host detected');
+                
+                // Update status
+                const statusDiv = document.getElementById('status');
+                if (statusDiv) {
+                    statusDiv.innerHTML = '✅ Custom functions runtime ready for Excel!';
+                    statusDiv.className = 'status-box success';
+                }
+            } else {
+                console.log('Non-Excel host or standalone browser');
+                
+                const statusDiv = document.getElementById('status');
+                if (statusDiv) {
+                    statusDiv.innerHTML = '⚠️ Not running in Excel - functions may not be available';
+                    statusDiv.className = 'status-box warning';
+                }
             }
             
-            // Log available functions for debugging
-            console.log('Available custom functions: ADDONE, ADDVALUE, TEST');
-        });
-
-        // Add some debugging information
-        window.addEventListener('load', () => {
-            console.log('Functions page loaded successfully');
-            console.log('Current URL:', window.location.href);
+            // The actual functions are loaded from functions.js by Excel's runtime
+            console.log('Functions page initialized successfully');
         });
     </script>
 
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
+            margin: 20px;
             padding: 20px;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
         }
         
         #content {
-            max-width: 800px;
+            max-width: 600px;
             margin: 0 auto;
             background: white;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.1);
             padding: 30px;
+            text-align: center;
         }
         
         h1 {
             color: #0078d4;
-            margin-bottom: 10px;
-            font-size: 28px;
-            text-align: center;
-        }
-        
-        h2 {
-            color: #323130;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 20px;
-        }
-        
-        h3 {
-            color: #106ebe;
-            margin: 15px 0 8px 0;
-            font-family: 'Consolas', monospace;
-            background: #f8f9fa;
-            padding: 8px 12px;
-            border-radius: 6px;
-            border-left: 4px solid #0078d4;
-        }
-        
-        .functions-list {
-            margin: 25px 0;
-        }
-        
-        .function-item {
-            margin-bottom: 25px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid #0078d4;
-        }
-        
-        .function-item p {
-            margin: 8px 0;
-            color: #605e5c;
-        }
-        
-        .example {
-            background: white;
-            padding: 12px;
-            border-radius: 6px;
-            margin-top: 10px;
-            font-family: 'Consolas', monospace;
-            font-size: 14px;
-            border: 1px solid #e1dfdd;
+            margin-bottom: 20px;
         }
         
         .status-box {
             padding: 15px;
             border-radius: 8px;
             margin: 20px 0;
-            text-align: center;
             font-weight: 600;
             background: #fff4ce;
             color: #323130;
@@ -165,22 +84,10 @@
             border-color: #107c10;
         }
         
-        .troubleshooting {
-            margin-top: 30px;
-            padding: 20px;
-            background: #fdf2f2;
-            border-radius: 8px;
-            border-left: 4px solid #d13438;
-        }
-        
-        .troubleshooting ul {
-            margin: 10px 0;
-            padding-left: 20px;
-        }
-        
-        .troubleshooting li {
-            margin: 8px 0;
-            color: #605e5c;
+        .status-box.warning {
+            background: #fff4ce;
+            color: #8a6914;
+            border-color: #ffb900;
         }
     </style>
 </body>
