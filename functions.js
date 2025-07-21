@@ -1,50 +1,71 @@
-// Minimal functions.js for testing
-console.log('📦 Functions.js loaded');
+/**
+ * Adds 1 to each element using Cloud Run
+ * @customfunction
+ * @param {number[][]} range The range to process
+ * @returns {Promise<number[][]>} Processed range
+ */
+async function ADDONE(range) {
+  try {
+    console.log('ADDONE called with:', range);
+    
+    const response = await fetch('https://excel-add-one-function-449328337363.us-central1.run.app/add-one', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: range })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    const result = await response.json();
+    console.log('Cloud response:', result);
+    
+    if (result.status === 'success') {
+      return result.result;
+    } else {
+      return [["Error: " + (result.error || 'Unknown error')]];
+    }
+  } catch (error) {
+    console.error('Function error:', error);
+    return [["Error: " + error.message]];
+  }
+}
 
 /**
  * Simple test function
  * @customfunction
  * @param {string} message Test message
- * @returns {string} Response message
+ * @returns {string} Response
  */
 function TEST(message = "Hello") {
-  console.log('🚀 TEST function called with:', message);
   return "SUCCESS: " + message + " at " + new Date().toLocaleTimeString();
 }
 
 /**
- * Add one to a number
+ * Add custom value to each element
  * @customfunction
- * @param {number} value Input number
- * @returns {number} Number plus one
+ * @param {number[][]} range The range to process
+ * @param {number} value Value to add (default 1)
+ * @returns {number[][]} Processed range
  */
-function ADDONE(value) {
-  console.log('🔢 ADDONE function called with:', value);
-  if (typeof value === 'number') {
-    return value + 1;
-  }
-  return "Error: Not a number";
-}
-
-// Wait for CustomFunctions to be available
-function registerFunctions() {
-  console.log('🔍 Checking for CustomFunctions...');
-  
-  if (typeof CustomFunctions !== 'undefined' && CustomFunctions.associate) {
-    console.log('✅ CustomFunctions found! Registering...');
-    
-    try {
-      CustomFunctions.associate("TEST", TEST);
-      CustomFunctions.associate("ADDONE", ADDONE);
-      console.log('🎉 Functions registered successfully!');
-    } catch (error) {
-      console.error('❌ Registration error:', error);
+function ADDVALUE(range, value = 1) {
+  try {
+    if (!range || !Array.isArray(range)) {
+      return [["Error: Invalid range"]];
     }
-  } else {
-    console.log('⏳ CustomFunctions not ready, trying again...');
-    setTimeout(registerFunctions, 500);
+    
+    // Handle single cell
+    if (!Array.isArray(range[0])) {
+      range = [range];
+    }
+    
+    return range.map(row => 
+      row.map(cell => 
+        typeof cell === 'number' ? cell + value : cell
+      )
+    );
+  } catch (error) {
+    return [["Error: " + error.message]];
   }
 }
-
-// Start registration when script loads
-registerFunctions();
