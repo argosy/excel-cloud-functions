@@ -1,56 +1,66 @@
-{
-  "functions": [
-    {
-      "description": "Adds 1 to each element using Google Cloud Run",
-      "id": "ADDONE",
-      "name": "ADDONE",
-      "parameters": [
-        {
-          "description": "The range to process",
-          "name": "range",
-          "type": "any[][]"
-        }
-      ],
-      "result": {
-        "type": "any[][]"
-      }
-    },
-    {
-      "description": "Simple test function",
-      "id": "TEST", 
-      "name": "TEST",
-      "parameters": [
-        {
-          "description": "Test message",
-          "name": "message",
-          "type": "string",
-          "optional": true
-        }
-      ],
-      "result": {
-        "type": "string"
-      }
-    },
-    {
-      "description": "Add custom value to each element",
-      "id": "ADDVALUE",
-      "name": "ADDVALUE",
-      "parameters": [
-        {
-          "description": "The range to process", 
-          "name": "range",
-          "type": "any[][]"
-        },
-        {
-          "description": "Value to add",
-          "name": "value", 
-          "type": "number",
-          "optional": true
-        }
-      ],
-      "result": {
-        "type": "any[][]"
-      }
-    }
-  ]
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp 
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" 
+  xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" 
+  xsi:type="TaskPaneApp">
+
+  <Id>11111111-2222-3333-4444-555555555555</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>CloudFnc</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  
+  <DisplayName DefaultValue="Cloud Functions" />
+  <Description DefaultValue="Custom functions with Cloud Run" />
+  
+  <Hosts>
+    <Host Name="Workbook" />
+  </Hosts>
+  
+  <Requirements>
+    <Sets>
+      <Set Name="ExcelApi" MinVersion="1.8"/>
+      <Set Name="CustomFunctionsRuntime" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+  
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://argosy.github.io/excel-cloud-functions/functions.html" />
+  </DefaultSettings>
+  
+  <Permissions>ReadWriteDocument</Permissions>
+  
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="Workbook">
+        <AllFormFactors>
+          <ExtensionPoint xsi:type="CustomFunctions">
+            <Script>
+              <SourceLocation resid="Functions.Script.Url" />
+            </Script>
+            <Page>
+              <SourceLocation resid="Functions.Page.Url" />
+            </Page>
+            <Metadata>
+              <SourceLocation resid="Functions.Metadata.Url" />
+            </Metadata>
+            <Namespace resid="Functions.Namespace" />
+          </ExtensionPoint>
+        </AllFormFactors>
+      </Host>
+    </Hosts>
+    
+    <Resources>
+      <bt:Urls>
+        <bt:Url id="Functions.Script.Url" DefaultValue="https://argosy.github.io/excel-cloud-functions/functions.js" />
+        <bt:Url id="Functions.Page.Url" DefaultValue="https://argosy.github.io/excel-cloud-functions/functions.html" />
+        <bt:Url id="Functions.Metadata.Url" DefaultValue="https://argosy.github.io/excel-cloud-functions/functions.json" />
+      </bt:Urls>
+      
+      <bt:ShortStrings>
+        <bt:String id="Functions.Namespace" DefaultValue="CLOUDRUN" />
+      </bt:ShortStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>
