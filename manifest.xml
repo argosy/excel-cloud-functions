@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" 
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" 
+           xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" 
+           xsi:type="TaskPaneApp">
+
+  <!-- Basic Settings: IMPORTANT - Generate a unique ID for your add-in -->
+  <Id>c1234567-1234-1234-1234-123456789abc</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Your Company Name</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  
+  <!-- Display Information -->
+  <DisplayName DefaultValue="Excel Cloud Functions" />
+  <Description DefaultValue="Custom functions powered by Google Cloud Run for 2D array processing" />
+  
+  <!-- Icons (optional - you can use placeholder URLs or remove these lines) -->
+  <IconUrl DefaultValue="https://via.placeholder.com/32x32/0078d4/ffffff?text=CF" />
+  <HighResolutionIconUrl DefaultValue="https://via.placeholder.com/64x64/0078d4/ffffff?text=CF" />
+  
+  <!-- Supported Hosts -->
+  <Hosts>
+    <Host Name="Workbook" />
+  </Hosts>
+  
+  <!-- Requirements -->
+  <Requirements>
+    <Sets>
+      <Set Name="ExcelApi" MinVersion="1.8"/>
+      <Set Name="CustomFunctionsRuntime" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+  
+  <!-- Default Settings -->
+  <DefaultSettings>
+    <!-- Updated with your GitHub Pages URL -->
+    <SourceLocation DefaultValue="https://argosy.github.io/excel-cloud-functions/functions.html" />
+  </DefaultSettings>
+  
+  <!-- Permissions -->
+  <Permissions>ReadWriteDocument</Permissions>
+  
+  <!-- Version Overrides for Custom Functions -->
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="Workbook">
+        
+        <!-- Custom Functions Extension Point -->
+        <AllFormFactors>
+          <ExtensionPoint xsi:type="CustomFunctions">
+            <Script>
+              <!-- IMPORTANT: Replace 'your-domain.com' with your actual hosting domain -->
+              <SourceLocation resid="Functions.Script.Url" />
+            </Script>
+            <Page>
+              <SourceLocation resid="Functions.Page.Url" />
+            </Page>
+            <Metadata>
+              <SourceLocation resid="Functions.Metadata.Url" />
+            </Metadata>
+            <Namespace resid="Functions.Namespace" />
+          </ExtensionPoint>
+        </AllFormFactors>
+        
+      </Host>
+    </Hosts>
+    
+    <!-- Resources -->
+    <Resources>
+      <bt:Urls>
+        <!-- Updated with your GitHub Pages URLs -->
+        <bt:Url id="Functions.Script.Url" DefaultValue="https://argosy.github.io/excel-cloud-functions/functions.js" />
+        <bt:Url id="Functions.Page.Url" DefaultValue="https://argosy.github.io/excel-cloud-functions/functions.html" />
+        <bt:Url id="Functions.Metadata.Url" DefaultValue="https://argosy.github.io/excel-cloud-functions/functions.json" />
+      </bt:Urls>
+      
+      <bt:ShortStrings>
+        <!-- This creates the namespace: CLOUDRUN.ADDONE -->
+        <bt:String id="Functions.Namespace" DefaultValue="CLOUDRUN" />
+      </bt:ShortStrings>
+    </Resources>
+    
+  </VersionOverrides>
+</OfficeApp>
