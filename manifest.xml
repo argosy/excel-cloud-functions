@@ -6,7 +6,7 @@
            xsi:type="TaskPaneApp">
 
   <!-- Basic Settings: IMPORTANT - Generate a unique ID for your add-in -->
-  <Id>c1234567-1234-1234-1234-123456789abc</Id>
+  <Id>d7894561-5678-5678-5678-567890123def</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>Your Company Name</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
